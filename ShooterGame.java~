@@ -1,0 +1,130 @@
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.paint.Color;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
+import javafx.stage.Screen;
+import javafx.scene.text.TextAlignment;
+
+public class ShooterGame extends Application {
+  
+
+        private double velocityY = 0;
+        private double accelerationY = 0.2;
+        private double backgroundOffset = 0;
+
+    @Override
+    public void start(Stage primaryStage) {
+      // Get the screen dimensions
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        // Create the root node
+        Group root = new Group();
+      // Add a background image
+      Image backgroundImage = new Image("arena.jpg");
+      ImageView backgroundImageView = new ImageView(backgroundImage);
+      backgroundImageView.setFitWidth(screenBounds.getWidth());
+      backgroundImageView.setFitHeight(screenBounds.getHeight());
+      root.getChildren().add(backgroundImageView);
+        
+    // Create the start screen
+    Text title = new Text("Don't Kill The Baby!");
+    title.setFont(Font.font("Verdana", FontWeight.BOLD, 60));
+    title.setX(screenBounds.getWidth()/3);
+    title.setY(screenBounds.getHeight()/2.5);
+    title.setTextAlignment(TextAlignment.CENTER);
+    title.setFill(Color.RED); // Set the text color to red
+
+
+    Text instructions = new Text("Press SPACE to start the game");
+    instructions.setFont(Font.font("Verdana", FontWeight.NORMAL, 30));
+    instructions.setX(screenBounds.getWidth()/3);
+    instructions.setY(screenBounds.getHeight()/1.5);
+    instructions.setTextAlignment(TextAlignment.CENTER);
+    instructions.setFill(Color.RED);
+
+    // Add the title and instructions to the root node
+    root.getChildren().addAll(title, instructions);
+
+        // Create the scene and add the root node to it
+        Scene startScene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+
+
+    // Add an event handler to start the game when SPACE is pressed
+    startScene.setOnKeyPressed(event -> {
+        if (event.getCode() == KeyCode.SPACE) {
+            // Switch to the game scene
+            primaryStage.setScene(createGameScene());
+        }
+    });
+
+    // Set the start scene to the stage and show the stage
+    primaryStage.setScene(startScene);
+    primaryStage.show();
+    }
+    private Scene createGameScene() {
+
+        // Get the screen dimensions
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        // Create the root node
+        Group root = new Group();
+      
+        // Create a car
+        Image carImage = new Image("player.png");
+        ImageView car = new ImageView(carImage);
+        car.setFitWidth(200);
+        car.setFitHeight(100);
+        car.setX(50);
+        car.setY(250);
+      
+        // Add a background image
+        Image backgroundImage = new Image("road.jpg");
+        ImageView backgroundImageView1 = new ImageView(backgroundImage);
+        backgroundImageView1.setFitWidth(screenBounds.getWidth());
+        backgroundImageView1.setFitHeight(screenBounds.getHeight());
+        root.getChildren().add(backgroundImageView1);
+
+        // Add the car to the root node
+        root.getChildren().add(car);
+
+        // Create the scene and add the root node to it
+        Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+
+        
+        // Add event handlers to move the car with mouse
+        scene.setOnTouchMoved(event -> {
+          double touchY = event.getTouchPoint().getY();
+          double touchX = event.getTouchPoint().getX();
+          car.setY(touchY - (car.getFitHeight() / 2));
+          car.setX(touchX - (car.getFitWidth() / 2));
+        });
+
+        // Add a game loop to update the car's position
+        Timeline gameLoop = new Timeline(new KeyFrame(Duration.millis(20), event -> {
+          // Hide the mouse cursor
+          scene.setCursor(Cursor.NONE);
+
+       
+        }));
+        
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
+        gameLoop.play();
+
+      return scene;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
